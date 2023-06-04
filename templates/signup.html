@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block index %}
+    <h5 class="mb-3">Регистрация</h5>
+
+    {% if user.is_authenticated %}
+        <div class="alert alert-secondary">Вы уже авторизованы</div>
+    {% else %}
+        <form action="." method="POST" class="needs-validation multi" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% bootstrap_form form layout="horizontal" label_class="form-label col-sm-3" field_class="form-field col-sm-7" %}
+
+            {% buttons %}
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            {% endbuttons %}
+        </form>
+     {% endif %}
+{% endblock %}

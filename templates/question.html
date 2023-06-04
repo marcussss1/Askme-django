@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+{% load check_likes %}
+
+{% block index %}
+    <!-- Question Post -->
+    <div class="media">
+        <div class="mr-3 text-center">
+            <div class="avatar mb-1">
+                <img src="{{ question.author.get_avatar }}">
+            </div>
+
+            <div id="q{{ question.id }}">{{ question.rating }}</div>
+
+            {% if user.is_authenticated and request.user.profile != question.author %}
+                <div class="rating">
+                    <button id="l{{ question.id }}" type="submit" formmethod="POST" formaction="{% url 'like' %}"
+                            class="btn btn-sm"
+                            {% check_likes user.profile question.id 'question' %}><i class="fas fa-plus"></i></button>
+                    <button id="d{{ question.id }}" type="submit" formmethod="POST" formaction="{% url 'like' %}"
+                            class="btn btn-sm"
+                            {% check_dislikes user.profile question.id 'question' %}><i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="media-body">
+            <h5 class="mt-0 mb-1"> {{ question.title }} </h5>
+            <p class="text-break"> {{ question.text }} </p>
+            {#        <p id="id-of-element">This text will be replaced</p>#}
+            <div class="mb-1">Теги:
+                {% for tag in question.tags.all %}
+                    <a href="{{ tag.get_absolute_url }}" class="text-decoration-none">{{ tag }}</a>
+                {% endfor %}
+            </div>
+
+            <hr>
+            <div class="">
+                <small class="text-muted">Автор: <span
+                        class="text-primary">{{ question.author.nickname }}</span></small>
+                <small class="text-muted">Опубликовано: {{ question.creating_date }}</small>
+            </div>
+
+        </div>
+    </div>
+
+    <hr>
+    <!-- Comments -->
+    <ul class="list-unstyled">
+        {% for comment in comments.object_list %}
+            {% include 'include/comment.html' with comment=comment %}
+        {% empty %}
+            <div class="alert alert-secondary" role="alert">
+                Ответов нет
+            </div>
+        {% endfor %}
+    </ul>
+
+    <!-- Comment pagination -->
+    {% include 'include/pagination.html' with object_list=comments.object_list page_range=comments.page_range %}
+
+    <hr>
+    <!-- Write your comment -->
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% bootstrap_form form show_label=False %}
+
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm p-0 m-0" style="display: none;" role="status"
+                      aria-hidden="true"></span>
+                Ответить
+            </button>
+        {% endbuttons %}
+    </form>
+    <script src="https://cdn.jsdelivr.net/gh/centrifugal/centrifuge-js@2.6.4/dist/centrifuge.min.js"></script>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+    </script>
+    <script>
+        const centrifuge = new Centrifuge("ws://127.0.0.1:8083/connection/websocket");
+        centrifuge.setToken("{{ secret_token }}");
+        console.log("Channel: {{ cent_chan }}");
+        centrifuge.subscribe("{{ cent_chan }}", function (message) {
+            console.log(message);
+            document.getElementById("ajax-title").innerHTML="Новый текст!";
+              });
+        centrifuge.connect();
+    </script>
+{% endblock %}
+
+ {#    <script src="/static/js/jquery-3.6.2.min.js"></script>#}
+    {#            <script>#}
+    {#            function getCookie(name) {#}
+    {#    let cookieValue = null;#}
+    {#    if (document.cookie && document.cookie !== '') {#}
+    {#        const cookies = document.cookie.split(';');#}
+    {#        for (let i = 0; i < cookies.length; i++) {#}
+    {#            const cookie = cookies[i].trim();#}
+    {#            if (cookie.substring(0, name.length + 1) === (name + '=')) {#}
+    {#                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));#}
+    {#                break;#}
+    {#            }#}
+    {#        }#}
+    {#    }#}
+    {#    return cookieValue;#}
+    {#const csrftoken = getCookie('csrftoken');#}
+    {#            </script>#}
+    {#            <script>#}
+    {#    $(".vote-up").on('click', function (ev) {#}
+    {#        console.log('Test')#}
+    {#        var $this = $(this)#}
+    {#        $.ajax({#}
+    {#            method: "POST",#}
+    {#            url: "/vote_up/",#}
+    {#            data: {'id': $this.data('id')},#}
+    {#            headers: {'X-CSRFToken': csrftoken}#}
+    {#        })#}
+    {#    })#}
+    {#    $(".vote-down").on('click', function (ev) {#}
+    {#        console.log('Test')#}
+    {#        var $this = $(this)#}
+    {#        $.ajax({#}
+    {#            method: "POST",#}
+    {#            url: "/vote_down/",#}
+    {#            data: {'id': $this.data('id')},#}
+    {#            headers: {'X-CSRFToken': csrftoken}#}
+    {#        })#}
+    {#    })#}
+    {#</script>#}
+
+
+    {#{% if request.user.is_authenticated %}#}
+            {#var your_div = document.getElementById('ajax-title');#}
+            {#var text_to_change = your_div.childNodes[0];#}
+            {#text_to_change.nodeValue = message['data[text]'];#}
+
+
+
+{#            var comment_best_comment = {{ comment.best_comment }}#}
+{#var comment_id = {{ comment.id }}#}
+{#var comment_author_get_avatar = {{ comment.author.get_avatar }}#}
+{#var comment_rating = {{ comment.rating }}#}
+{#var user_is_authenticated = {{ user.is_authenticated }}#}
+{#var request_user_profile = {{ request.user.profile }}#}
+{#var comment_author = {{ comment.author }}#}
+{#var user_profile = {{ user.profile }}#}
+{#var comment_text = {{ comment.text }}#}
+{#var comment_question_author = {{ comment.question.author }}#}
+{#var comment_question_id_answer = {{ comment.question.id_answer }}#}
+{#            var page = `{% load static %}{% load check_likes %} <li class="media border rounded mb-3 p-3 container {% if ${comment_best_comment} == True %}right-comment{% endif %}" id="${comment_id}"> <div class="mr-3 text-center"> <div class="avatar-mini mb-1"> <img src="${comment_author_get_avatar}"> </div> <div id="c${comment_id}">${comment_rating}</div>{% if ${user_is_authenticated} and ${request_user_profile} != ${comment_author} %}<div class="сrating"><button id="l${comment_id}" type="submit" formmethod="POST" formaction="{% url 'clike' %}" class="btn btn-sm"{% check_likes ${user.profile} ${comment_id} 'comment' %}><i class="fas fa-plus"></i></button><button id="d${comment_id}" type="submit" formmethod="POST" formaction="{% url 'clike' %}" class="btn btn-sm"{% check_dislikes ${user.profile} ${comment_id} 'comment' %}><i class="fas fa-minus"></i></button></div>{% endif %} </div> <div class="media-body"> <p class="text-break"> ${comment_text}</p>{% if ${user_is_authenticated} and ${user.profile} == ${comment_question_author} %}<div class="custom-control custom-checkbox correct-answer"><input type="checkbox" class="custom-control-input" id="CorrectAnswer${comment_id}"{% if ${comment_question_id_answer} > 0 %} disabled {% endif %}{% if ${comment_question_id_answer} == ${comment_id} %} checked {% endif %}><label class="custom-control-label" for="CorrectAnswer${comment_id}">Отметить как верный ответ</label></div>{% endif %} </li>`;#}
+{#            var page = '{% include 'include/comment.html'%} with comment=comment';#}
+{#            document.body.insertAdjacentHTML( 'afterbegin', page);#}
+{#        <hr>#}
+{#        <div class="">#}
+{#            <small class="text-muted">Автор: <span class="text-primary">{{ comment.author.nickname }}</span></small>#}
+{#            <small class="text-muted">Опубликовано: {{ comment.creating_date }}</small>#}
+{##}
+{#            {% if comment.id == comment.question.id_answer and user.profile != comment.question.author %}#}
+{#                <span data-toggle="tooltip" data-placement="top" title="Автор поста отметил этот комментарий как верный"#}
+{#                      class="badge badge-success px-1 float-right"><i class="fas fa-check-circle"></i></span>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#    </div>#}
+{#</li>' );#}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            {#node = document.getElementById('comment');#}
+            {#node.insertAdjacentHTML('afterend','<div>SampleDiv</div>');#}
+
+
+            {#var picHolder = document.getElementById("comment");#}
+            {#var img = document.createElement('<h1>AAAAAAAAAAAAAAAA</h1>');#}
+            {#document.body.insertBefore(img, picHolder.body.childNodes[0]);#}
+
+
+
+            {#var img = document.createElement("img");#}
+            {#img.src = "images/stone3.jpg";#}
+            {#picHolder.appendChild(img);#}
+            {#document.createElement('<h1>AAAAAAAAAAA</h1>');#}
+
+            {#function create(htmlStr) {#}
+            {#    var frag = document.createDocumentFragment(),#}
+            {#        temp = document.createElement('div');#}
+            {#    temp.innerHTML = htmlStr;#}
+            {#    while (temp.firstChild) {#}
+            {#        frag.appendChild(temp.firstChild);#}
+            {#    }#}
+            {#    return frag;#}
+
+            {#            var text = "aaaaaa"#}
+            {#            var fragment = create(`{% include 'include/comment.html' %}`);#}
+            {#// You can use native DOM methods to insert the fragment:#}
+
+            {#document.body.insertBefore(fragment, document.body.childNodes[0]);#}
+
+
+
+
+            {#console.log(document.body.childNodes.keys())#}
+
+            {#            var fragment = create('<div>Hello!</div><p>...</p>');#}
+            {#// You can use native DOM methods to insert the fragment:#}
+            {#            document.body.insertBefore(fragment, document.body.childNodes[0]);#}
+
+
+
+
+            {#            var articleDiv = document.querySelector("div.article");#}
+            {#// создаем элемент#}
+            {#            var elem = document.createElement("h2");#}
+            {#// создаем для него текст#}
+            {#            var elemText = document.createTextNode("Привет мир");#}
+            {#// добавляем текст в элемент в качестве дочернего элемента#}
+            {#            elem.appendChild(elemText);#}
+            {#// получаем первый элемент, перед которым будет идти добавление#}
+            {#            var firstElem = articleDiv.firstChild.nextSibling;#}
+            {#// добавляем элемент в блок div перед первым узлом#}
+            {#            articleDiv.insertBefore(elem, firstElem);#}
+            {#            {{ flag = false }}#}
+            {#            {% for comment in comments.object_list %}#}
+            {#                {% include 'include/comment.html' with comment=comment %}#}
+            {#            {% endfor %}#}
+            {#            {{ comments }}#}
+            {#document.getElementById("id-of-element").innerHTML = "new text";#}
+            {#var h4 = document.getElementsByClassName("ajax-comment")[0],#}
+            {#target = h4.childNodes[0];#}
+            {#target.innerHTML = "About the author";#}
+
+            {#$(".love-btn").on('click', function (ev) {#}
+            {#    const request = new Request(#}
+            {#        'http://127.0.0.1:8000/ajax_comment/',#}
+            {#        {#}
+            {#            method: 'POST',#}
+            {#            headers: {#}
+            {#                'X-CSRFToken': csrftoken,#}
+            {#                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'#}
+            {#            },#}
+            {#        }#}
+            {#    )#}
+            {##}
+            {#    fetch(request).then(#}
+            {#        response_raw => response_raw.json().then(#}
+            {#            response_json => $(this).attr("data-count", response_json.id)#}
+            {#        )#}
+            {#    );#}
+
+
+            {#var $this = $(this)#}
+            {# $.ajax({#}
+            {#     method: "POST",#}
+            {#     url: "/ajax_comment/",#}
+            {#     data: {'question_id': $this.data('id'), 'data': message},#}
+            {#     headers: {'X-CSRFToken': csrftoken}#}
+            {# });#}
+
+
+
+
+

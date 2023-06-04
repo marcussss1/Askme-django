@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block index %}
+
+    {% block sortParameters %}
+        <div class="mb-3">
+            {% if tag %}
+                <h5> Сортировать по тегу <a href="{% url 'tag' tag=tag %}" class="text-decoration-none">{{ tag }}</a></h5>
+            {% else %}
+                <a href="{% url 'index' %}"><button type="button" class="btn btn-outline-primary btn-sm">По дате</button></a>
+                <a href="{% url 'hot' %}"><button type="button" class="btn btn-outline-primary btn-sm">По рейтингу</button></a>
+            {% endif %}
+        </div>
+    {% endblock %}
+
+    <!-- Questions list -->
+    <div>
+        <ul class="list-unstyled">
+            {% for question in object_list %}
+                {% include 'include/question_index.html' with question=question %}
+            {% empty %}
+                <div class="alert alert-secondary" role="alert">
+                    Вопросы не найдены
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Pagination -->
+    {% include 'include/pagination.html' with object_list=object_list page_range=page_range %}
+
+{% endblock %}

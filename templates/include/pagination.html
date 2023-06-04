@@ -1,0 +1,19 @@
+<nav aria-label="PageNavigation">
+    <ul class="pagination mt-5">
+        {% if object_list.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ object_list.previous_page_number }}">←</a></li>
+        {% endif %}
+
+        {% for num in page_range %}
+            {% if num == object_list.number %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+                <li class="page-item"><a class="page-link"  href="?page={{ num }}"> {{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if object_list.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ object_list.next_page_number }}">→</a></li>
+        {% endif %}
+    </ul>
+</nav>

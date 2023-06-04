@@ -1,0 +1,42 @@
+{% load static %}
+{% load check_likes %}
+
+<li class="media border rounded mb-3 p-3 container">
+    <div class="mr-3 text-center">
+        <div class="avatar-mini mb-1">
+            <img src="{{ question.author.get_avatar }}">
+        </div>
+
+        <div id="q{{ question.id }}">{{ question.rating }}</div>
+
+        {% if user.is_authenticated and request.user.profile != question.author %}
+        <div class="rating">
+            <button id="l{{ question.id }}" type="submit" formmethod="POST" formaction="{% url 'like' %}" class="btn btn-sm"
+                {% check_likes user.profile question.id 'question' %}><i class="fas fa-plus"></i></button>
+            <button id="d{{ question.id }}" type="submit" formmethod="POST" formaction="{% url 'like' %}" class="btn btn-sm"
+                {% check_dislikes user.profile question.id 'question' %}><i class="fas fa-minus"></i></button>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="media-body">
+        <h5 class="mt-0 mb-1">{{ question.title }}</h5>
+        <p class="text-break">{{ question.text|truncatechars:256 }}</p>
+
+        <div class="mb-1">Теги:
+            {% for tag in question.tags.all %}
+                <a href="{{ tag.get_absolute_url }}" class="text-decoration-none">{{ tag }}</a>
+            {% empty %}
+            {% endfor %}
+        </div>
+        <a href="{{ question.get_absolute_url }}" class="text-decoration-none"> Комментарии <span class="badge badge-pill badge-secondary">{{ question.comment_count }}</span></a>
+
+        <hr>
+        <div class="">
+            <small class="text-muted">Автор: <span class="text-primary">{{ question.author.nickname }}</span></small>
+            <small class="text-muted">Опубликовано: {{ question.creating_date }}</small>
+        </div>
+
+    </div>
+</li>

@@ -1,0 +1,9 @@
+{
+  "port": 8083,
+  "v3_use_offset": true,
+  "token_hmac_secret_key": "204fbc14-6a31-4194-8b89-10ec44d4de37",
+  "admin_password": "28eca4ff-847a-4658-b070-533bc099b035",
+  "admin_secret": "b7d07969-10eb-45b8-9a8f-02269f60fe40",
+  "api_key": "3c086157-a521-4c50-81b5-5725c39a40da",
+  "allowed_origins": ["127.0.0.1:8082"]
+}

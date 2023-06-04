@@ -1,0 +1,46 @@
+{% load static %}
+{% load check_likes %}
+
+<li class="media border rounded mb-3 p-3 container {% if comment.best_comment == True %}right-comment{% endif %}" id="{{ comment.id }}">
+    <div class="mr-3 text-center">
+        <div class="avatar-mini mb-1">
+            <img src="{{ comment.author.get_avatar }}">
+        </div>
+
+        <div id="c{{ comment.id }}">{{ comment.rating }}</div>
+
+        {% if user.is_authenticated and request.user.profile != comment.author %}
+            <div class="сrating">
+                <button id="l{{ comment.id }}" type="submit" formmethod="POST" formaction="{% url 'clike' %}" class="btn btn-sm"
+                    {% check_likes user.profile comment.id 'comment' %}><i class="fas fa-plus"></i></button>
+                <button id="d{{ comment.id }}" type="submit" formmethod="POST" formaction="{% url 'clike' %}" class="btn btn-sm"
+                    {% check_dislikes user.profile comment.id 'comment' %}><i class="fas fa-minus"></i></button>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="media-body">
+        <p class="text-break" id="ajax-title"> {{ comment.text }}</p>
+
+        {% if user.is_authenticated and user.profile == comment.question.author %}
+            <div class="custom-control custom-checkbox correct-answer">
+                <input type="checkbox" class="custom-control-input" id="CorrectAnswer{{ comment.id }}"
+                        {% if comment.question.id_answer > 0 %} disabled {% endif %}
+                        {% if comment.question.id_answer == comment.id %} checked {% endif %}>
+                <label class="custom-control-label" for="CorrectAnswer{{ comment.id }}">Отметить как верный ответ</label>
+            </div>
+        {% endif %}
+
+        <hr>
+        <div class="">
+            <small class="text-muted">Автор: <span class="text-primary">{{ comment.author.nickname }}</span></small>
+            <small class="text-muted">Опубликовано: {{ comment.creating_date }}</small>
+
+            {% if comment.id == comment.question.id_answer and user.profile != comment.question.author %}
+                <span data-toggle="tooltip" data-placement="top" title="Автор поста отметил этот комментарий как верный"
+                      class="badge badge-success px-1 float-right"><i class="fas fa-check-circle"></i></span>
+            {% endif %}
+        </div>
+    </div>
+</li>

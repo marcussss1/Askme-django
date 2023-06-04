@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+
+{% block index %}
+        <h5 class="mb-3">Новый вопрос</h5>
+
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form layout="horizontal" label_class="form-label col-sm-3" field_class="form-field col-sm-7" %}
+            {% buttons %}
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm p-0 m-0" style="display: none;" role="status" aria-hidden="true"></span>
+                    Задать вопрос
+                </button>
+            {% endbuttons %}
+        </form>
+{% endblock %}

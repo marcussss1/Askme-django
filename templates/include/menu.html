@@ -1,0 +1,41 @@
+<div class="mt-4 pb-3 border-bottom">
+    <p class="text-center h2">
+        Popular tags
+    </p>
+{#    {%  %}#}
+{#    <ul class="list-inline">#}
+
+        {#        <li class="list-inline-item"><a href="#">Lorem ipsum</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Dolor sit amet</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Consectetur adipiscing elit</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Integer molestie</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Lorem at massa</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Facilisis in pretium</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Nisl aliquet</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Nulla volutpat</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Aliquam velit</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Phasellus iaculis neque</a></li>#}
+{#    </ul>#}
+</div>
+
+<div class="mt-4 pb-3 border-bottom">
+    <p class="text-center h2">
+        Best users
+    </p>
+
+    <ul class="list-inline">
+         {% for top_user in top_users %}
+             <li class="list-inline-item"><a href="#">{{ top_user.nickname }}</a></li>
+         {% endfor %}
+{#        <li class="list-inline-item"><a href="#">Lorem ipsum</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Dolor sit amet</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Consectetur adipiscing elit</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Integer molestie</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Lorem at massa</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Facilisis in pretium</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Nisl aliquet</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Nulla volutpat</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Aliquam velit</a></li>#}
+{#        <li class="list-inline-item"><a href="#">Phasellus iaculis neque</a></li>#}
+    </ul>
+</div>

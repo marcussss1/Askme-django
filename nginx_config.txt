@@ -1,0 +1,27 @@
+upstream askme {
+    server 127.0.0.1:8000;
+}
+
+server {
+    listen 80 default_server;
+    server_name askme.com;
+    access_log /home/marcussss1/copyAskme/TP-Web/logs/DanilaAsked.access.log;
+    access_log /home/marcussss1/copyAskme/TP-Web/logs/DanilaAsked.error.log;
+
+    location /static {
+        root /home/marcussss1/copyAskme/TP-Web/;
+    }
+
+    location ^~ /uploads/ {
+        root /home/marcussss1/copyAskme/TP-Web/;
+    }
+
+    location / {
+        proxy_pass http://askme;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_cache askme_zone;
+        proxy_cache_valid 200 302 10m;
+        proxy_cache_valid 404 1m;
+    }
+}

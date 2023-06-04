@@ -1,0 +1,31 @@
+{% load static %}
+
+{% if user.is_authenticated %}
+    <div class="navbar-nav media">
+        <div class="avatar-mini mr-3 d-none d-md-none d-lg-block">
+            <img src="{{ user.profile.get_avatar }}">
+        </div>
+        <div class="media-body">
+            <h5 class="my-1"> {{ user.username }} </h5>
+            <div>
+                <ul class="list-unstyled navbar-nav">
+                    <li class="nav-item mr-2">
+                        <a href="{% url 'profile' %}">Настройки</a>
+                    </li>
+                    <li class="nav-item mr-1">
+                        <a href="{% url 'logout' %}">Выход</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <ul class="list-unstyled navbar-nav">
+        <li class="nav-item mr-4">
+            <a href="{% url 'login' %}?next={{ request.get_full_path }}" class="text-decoration-none">Вход</a>
+        </li>
+        <li class="nav-item mr-1">
+            <a href="{% url 'signup' %}" class="text-decoration-none">Регистрация</a>
+        </li>
+    </ul>
+{% endif %}

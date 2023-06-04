@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+# что - input
+# куда - action
+# как - method="POST/GET" / enctype (multipart/form-data = ДЛЯ КАРТИНОК!!!, но универсальный)
+
+{% block index %}
+    <h5 class="mb-3">Вход</h5>
+
+    {% if user.is_authenticated %}
+        <div class="alert alert-secondary">Вы уже авторизованы</div>
+    {% else %}
+        <form action="{% url 'login' %}" method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% bootstrap_form form layout="horizontal" label_class="form-label col-sm-3" field_class="form-field col-sm-7" %}
+
+            <input type="hidden" name="next" value="{{ next }}">
+
+            {% buttons %}
+                    <button type="submit" class="btn btn-primary px-3" >Вход</button>
+            {% endbuttons %}
+        </form>
+
+        <div class="form-group row">
+            <span class="pl-3"><a href="{% url 'signup' %}" >Зарегистрироваться</a></span>
+        </div>
+    {% endif %}
+
+{% endblock %}

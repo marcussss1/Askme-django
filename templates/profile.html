@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% load static %}
+
+{% block index %}
+    {% if messages %}
+        {% for message in messages %}
+            <script>$('.toast').filter('.success').toast('show');</script>
+        {% endfor %}
+    {% endif %}
+
+    <h5 class="mb-3">Профиль пользователя {{ user.username }}</h5>
+    <form action="{% url 'profile' %}" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% bootstrap_form form layout="horizontal" label_class="form-label col-sm-3" field_class="form-field col-sm-7" %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="form-group row">
+            <div class="offset-sm-3 col-sm-7">
+                <div class="avatar">
+                    <img src="{{ user.profile.get_avatar }}" id="preview">
+                </div>
+            </div>
+        </div>
+
+        {% buttons %}
+            <label class="col-sm-3 mr-1"></label>
+            <button type="submit" class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm p-0 m-0" style="display: none;" role="status" aria-hidden="true"></span>
+                Сохранить</button>
+        {% endbuttons %}
+    </form>
+{% endblock %}
